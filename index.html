@@ -194,10 +194,7 @@
     line-height:1.2;
     animation-delay:.75s;
   }
-
-  .guest-name:empty{
-    display:none;
-  }
+  .guest-name:empty{ display:none; }
 
   .divider{
     width:150px;
@@ -320,13 +317,82 @@
     text-wrap:balance;
   }
 
-  .admin-panel{
+  .menu-btn-container{
+    margin-top:28px;
+    animation-delay:2s;
+  }
+  .btn-menu{
+    background:linear-gradient(135deg, var(--gold-bright), var(--gold-deep));
+    color:#ffffff;
+    border:none;
+    padding:12px 28px;
+    font-family:'Cormorant Garamond', serif;
+    font-size:18px;
+    font-weight:600;
+    border-radius:30px;
+    cursor:pointer;
+    box-shadow:0 6px 18px rgba(138,100,35,0.3);
+    transition:transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-menu:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 22px rgba(138,100,35,0.45);
+  }
+
+  .modal-overlay{
     display:none;
     position:fixed;
     top:0; left:0; right:0; bottom:0;
     background:rgba(44, 58, 77, 0.75);
     backdrop-filter:blur(4px);
     z-index:999;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .modal-overlay.active{ display:flex; }
+
+  .modal-card{
+    background:linear-gradient(180deg, #faf5e6 0%, #f1e6c7 100%);
+    border:1px solid rgba(169,128,63,0.4);
+    border-radius:8px;
+    padding:30px 24px;
+    box-shadow:0 15px 35px rgba(0,0,0,0.25);
+    width:100%;
+    max-width:420px;
+    text-align:center;
+    position:relative;
+  }
+  .modal-card h3{
+    font-size:22px;
+    font-weight:700;
+    color:var(--blue-deep);
+    margin:0 0 12px;
+  }
+  .modal-card p{
+    font-size:18px;
+    font-style:italic;
+    color:var(--ink-soft);
+    line-height:1.6;
+    margin:0;
+  }
+  .close-modal{
+    position:absolute;
+    top:10px; right:14px;
+    background:none;
+    border:none;
+    font-size:24px;
+    color:var(--ink-soft);
+    cursor:pointer;
+  }
+
+  .admin-panel{
+    display:none;
+    position:fixed;
+    top:0; left:0; right:0; bottom:0;
+    background:rgba(44, 58, 77, 0.75);
+    backdrop-filter:blur(4px);
+    z-index:1000;
     align-items:center;
     justify-content:center;
     padding:20px;
@@ -408,16 +474,6 @@
   }
   .admin-card .toast.show{ opacity:1; }
 
-  .close-admin{
-    position:absolute;
-    top:10px; right:14px;
-    background:none;
-    border:none;
-    font-size:24px;
-    color:var(--ink-soft);
-    cursor:pointer;
-  }
-
   @media (max-width:380px){
     .title{font-size:42px;}
     .lead, .lead2, .poem, .wish, .signoff{font-size:16.5px;}
@@ -429,6 +485,10 @@
 </style>
 </head>
 <body>
+
+<audio id="bgMusic" loop preload="auto">
+  <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-wedding-main-670.mp3" type="audio/mpeg">
+</audio>
 
 <div class="stage">
   <div class="card">
@@ -526,6 +586,7 @@
       </defs>
     </svg>
 
+    <!-- 1. Оши тӯй -->
     <div class="content" id="viewOsh">
       <div class="dish fade">
         <svg class="steam" viewBox="0 0 60 46" xmlns="http://www.w3.org/2000/svg">
@@ -559,6 +620,7 @@
       <p class="families fade">Норматовҳо ва Шодмоновҳо</p>
     </div>
 
+    <!-- 2. Свадьба -->
     <div class="content" id="viewWedding" style="display:none;">
       <div class="title-honor fade">Муҳтарам(а)</div>
       <div class="guest-name fade guestNameDisplay"></div>
@@ -598,19 +660,113 @@
       </div>
     </div>
 
+    <!-- 3. Оши тӯй (для друзей) -->
+    <div class="content" id="viewFriendsOsh" style="display:none;">
+      <div class="dish fade">
+        <svg class="steam" viewBox="0 0 60 46" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14,44 C10,34 20,30 16,20 C13,13 18,8 16,2"/>
+          <path d="M30,44 C26,33 36,28 31,18 C28,10 33,6 30,0"/>
+          <path d="M46,44 C42,34 51,29 47,19 C44,12 48,8 46,3"/>
+        </svg>
+        <svg viewBox="0 0 120 108" xmlns="http://www.w3.org/2000/svg"><use href="#osh-bowl"/></svg>
+      </div>
+
+      <div class="title-honor fade">Муҳтарам</div>
+      <div class="guest-name fade guestNameDisplay"></div>
+      <div class="divider"></div>
+
+      <p class="lead fade">Шуморо бо самимияти афзун ба</p>
+      <p class="title fade">Оши тӯй</p>
+
+      <p class="lead2 fade">
+        -и хонадоршавии фарзандони азизамон,<br>
+        ки санаи <span class="glue">08 сентябри</span> соли равон соати <span class="glue">17:30</span><br>
+        дар тарабхонаи <span class="glue">«Яккасарой» Grand Hall</span><br>
+        баргузор мегардад, даъват менамоем.
+      </p>
+
+      <p class="wish fade">
+        Аз дидани ёрон дил бегубор бошад,<br>
+        Бахри насиби дӯстон оши тӯйи бошад.
+      </p>
+
+      <p class="signoff fade">Бо эҳтироми самимӣ, оилаҳои</p>
+      <p class="families fade">Норматовҳо ва Шодмоновҳо</p>
+
+      <div class="menu-btn-container fade">
+        <button class="btn-menu openMenuModalBtn">хӯрокҳо - меню</button>
+      </div>
+    </div>
+
+    <!-- 4. Свадьба (для друзей) -->
+    <div class="content" id="viewFriendsWedding" style="display:none;">
+      <div class="title-honor fade">Муҳтарам(а)</div>
+      <div class="guest-name fade guestNameDisplay"></div>
+      <div class="divider"></div>
+
+      <div class="monogram fade">
+        <svg viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+          <use href="#laurel-wreath-monogram"/>
+        </svg>
+      </div>
+
+      <p class="poem fade">
+        Ба ин рӯзи муборак мо Шуморо хабар созем,<br>
+        Қадамҳои Шуморо нури дида, тоҷи сар созем,<br>
+        Шуморо ҳам насиб бошад, ки моён марҳабо гӯем,<br>
+        Зи таҳти дил муборакбод намуда, дилрабо гӯем.
+      </p>
+
+      <p class="lead fade">
+        Бо камоли эҳтиром ва меҳри беандоза Шуморо<br>
+        ба тӯйи хонадоршавии фарзандонамон
+      </p>
+
+      <p class="names fade">Азизҷон &amp; Шукронахон</p>
+
+      <p class="lead2 fade">
+        даъват менамоем.<br>
+        Бо як ҷаҳон меҳр, оилаҳои<br>
+        Норматовҳо ва Шодмоновҳо
+      </p>
+
+      <div class="datebox fade">
+        <span class="date">08.09.2026</span>
+        тарабхонаи «Яккасарой»<br>
+        Grand Hall<br>
+        соати 19:00
+      </div>
+
+      <div class="menu-btn-container fade">
+        <button class="btn-menu openMenuModalBtn">хӯрокҳо - меню</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
+<!-- Модальное окно Меню -->
+<div class="modal-overlay" id="menuModal">
+  <div class="modal-card">
+    <button class="close-modal" id="closeMenuModal">&times;</button>
+    <h3>Ds Эсхата 927718310</h3>
+    <p>хӯрокҳои рӯи миз аз маблаги гузаронида вобаста аст.</p>
+  </div>
+</div>
+
+<!-- Админ-панель -->
 <div class="admin-panel" id="adminPanel">
   <div class="admin-card">
-    <button class="close-admin" id="closeAdmin">&times;</button>
+    <button class="close-modal" id="closeAdmin">&times;</button>
     <h2>Создание приглашения</h2>
 
     <div>
       <label for="inviteTypeSelect">Тип приглашения:</label>
       <select id="inviteTypeSelect">
-        <option value="osh">Оши тӯй (Плов)</option>
-        <option value="wedding">Тӯйи хонадоршавӣ (Свадьба)</option>
+        <option value="osh">1. Оши тӯй</option>
+        <option value="wedding">2. Свадьба</option>
+        <option value="friends_osh">3. Оши тӯй (для друзей)</option>
+        <option value="friends_wedding">4. Свадьба (для друзей)</option>
       </select>
     </div>
 
@@ -629,64 +785,101 @@
   </div>
 </div>
 
-<audio id="bgAudio" src="music.mp3" autoplay loop preload="auto" playsinline></audio>
-
 <script>
 (function(){
+  // Логика Музыки
+  var audio = document.getElementById('bgMusic');
+  
+  function playAudio() {
+    if(audio && audio.paused) {
+      audio.play().catch(function(err){});
+    }
+  }
+
+  playAudio();
+  ['click', 'touchstart', 'keydown', 'scroll'].forEach(function(evt) {
+    document.addEventListener(evt, playAudio, { once: true });
+  });
+
+  // Отображение блоков
   var viewOsh = document.getElementById('viewOsh');
   var viewWedding = document.getElementById('viewWedding');
+  var viewFriendsOsh = document.getElementById('viewFriendsOsh');
+  var viewFriendsWedding = document.getElementById('viewFriendsWedding');
   var guestDisplays = document.querySelectorAll('.guestNameDisplay');
 
-  var params = new URLSearchParams(window.location.search);
-  var guest = (params.get('guest') || '').replace(/\+/g, ' ').replace(/\s+/g, ' ').trim();
-  var type = (params.get('type') || 'osh').toLowerCase();
+  function parseParams() {
+    var guest = '';
+    var type = 'osh';
 
-  guestDisplays.forEach(function(el){
-    if(guest){
+    var hash = window.location.hash.replace('#', '');
+    if (hash && hash !== 'admin') {
+      var parts = hash.split('-');
+      if (parts.length >= 2) {
+        type = parts[0];
+        guest = decodeURIComponent(parts.slice(1).join('-'));
+      } else {
+        type = parts[0];
+      }
+    } else {
+      var params = new URLSearchParams(window.location.search);
+      guest = (params.get('guest') || '').replace(/\+/g, ' ').replace(/\s+/g, ' ').trim();
+      type = (params.get('type') || 'osh').toLowerCase();
+    }
+
+    guestDisplays.forEach(function(el){
       el.textContent = guest;
+    });
+
+    viewOsh.style.display = 'none';
+    viewWedding.style.display = 'none';
+    viewFriendsOsh.style.display = 'none';
+    viewFriendsWedding.style.display = 'none';
+
+    if(type === 'wedding'){
+      viewWedding.style.display = 'block';
+      document.title = 'Тӯйи хонадоршавӣ — Даъватнома';
+    } else if(type === 'friends_osh'){
+      viewFriendsOsh.style.display = 'block';
+      document.title = 'Оши тӯй (для друзей) — Даъватнома';
+    } else if(type === 'friends_wedding'){
+      viewFriendsWedding.style.display = 'block';
+      document.title = 'Свадьба (для друзей) — Даъватнома';
+    } else {
+      viewOsh.style.display = 'block';
+      document.title = 'Оши тӯй — Даъватнома';
+    }
+  }
+
+  parseParams();
+  window.addEventListener('hashchange', function(){
+    if(window.location.hash !== '#admin'){
+      parseParams();
     }
   });
 
-  if(type === 'wedding'){
-    viewOsh.style.display = 'none';
-    viewWedding.style.display = 'block';
-    document.title = 'Тӯйи хонадоршавӣ — Даъватнома';
-  } else {
-    viewOsh.style.display = 'block';
-    viewWedding.style.display = 'none';
-    document.title = 'Оши тӯй — Даъватнома';
-  }
+  // Логика Модального окна Меню
+  var menuModal = document.getElementById('menuModal');
+  var closeMenuModal = document.getElementById('closeMenuModal');
+  var openMenuBtns = document.querySelectorAll('.openMenuModalBtn');
 
-  var audio = document.getElementById('bgAudio');
-  if(audio){
-    audio.volume = 0.35;
-    var started = false;
-    var unlockEvents = ['pointerdown', 'touchstart', 'click', 'keydown', 'scroll'];
-
-    function tryPlay(){
-      if(started) return;
-      var playAttempt = audio.play();
-      if(playAttempt && typeof playAttempt.then === 'function'){
-        playAttempt.then(markStarted).catch(function(){});
-      } else {
-        markStarted();
-      }
-    }
-
-    function markStarted(){
-      started = true;
-      unlockEvents.forEach(function(name){
-        document.removeEventListener(name, tryPlay, true);
-      });
-    }
-
-    unlockEvents.forEach(function(name){
-      document.addEventListener(name, tryPlay, {capture:true, passive:true});
+  openMenuBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      menuModal.classList.add('active');
     });
+  });
 
-    tryPlay();
-  }
+  closeMenuModal.addEventListener('click', function(){
+    menuModal.classList.remove('active');
+  });
 
+  menuModal.addEventListener('click', function(e){
+    if(e.target === menuModal){
+      menuModal.classList.remove('active');
+    }
+  });
+
+  // Логика Админки
   var adminPanel = document.getElementById('adminPanel');
   var closeAdmin = document.getElementById('closeAdmin');
   var guestInput = document.getElementById('guestNameInput');
@@ -697,27 +890,28 @@
   var copyBtn = document.getElementById('copyBtn');
   var toast = document.getElementById('toast');
 
-  function openModal(){
+  function openAdmin(){
     adminPanel.classList.add('active');
   }
 
-  function closeModal(){
+  function closeAdminModal(){
     adminPanel.classList.remove('active');
     if(window.location.hash === '#admin'){
       history.replaceState(null, null, window.location.pathname + window.location.search);
+      parseParams();
     }
   }
 
-  closeAdmin.addEventListener('click', closeModal);
+  closeAdmin.addEventListener('click', closeAdminModal);
 
-  function checkHash(){
+  function checkAdminHash(){
     if(window.location.hash === '#admin'){
-      openModal();
+      openAdmin();
     }
   }
 
-  window.addEventListener('hashchange', checkHash);
-  checkHash();
+  window.addEventListener('hashchange', checkAdminHash);
+  checkAdminHash();
 
   generateBtn.addEventListener('click', function(){
     var name = guestInput.value.trim();
@@ -725,8 +919,9 @@
     if(!name) return;
 
     var baseUrl = window.location.protocol + '//' + window.location.host + window.location.pathname;
-    var fullUrl = baseUrl + '?type=' + encodeURIComponent(selectedType) + '&guest=' + encodeURIComponent(name);
-    linkOutput.textContent = fullUrl;
+    var shortUrl = baseUrl + '#' + selectedType + '-' + encodeURIComponent(name);
+    
+    linkOutput.textContent = shortUrl;
     resultBox.classList.add('active');
     toast.classList.remove('show');
   });
